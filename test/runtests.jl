@@ -1,5 +1,5 @@
-using ComposableTypes
+using ModularTypes
 using Base.Test
 
-# write your own tests here
-@test 1 == 2
+include("test_multitraits.jl")
+include("test_forwardmultitraits.jl")
