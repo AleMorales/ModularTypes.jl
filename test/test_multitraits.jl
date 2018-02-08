@@ -1,4 +1,5 @@
 using ModularTypes
+import Parameters
 using Base.Test
 
 module MT

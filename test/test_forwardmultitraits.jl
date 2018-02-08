@@ -1,5 +1,6 @@
 using ModularTypes
 using Base.Test
+import Parameters
 
 module FMT
     # Trait class

@@ -1,9 +1,10 @@
 using ModularTypes
+import Parameters
 using Base.Test
 
 module OMT
     using ModularTypes
-    using Parameters
+    import Parameters
     # Trait class
     struct TC end
     # One trait
