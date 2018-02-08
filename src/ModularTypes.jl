@@ -1,6 +1,6 @@
 module ModularTypes
 
-using MacroTools
+import MacroTools
 using Parameters
 
 export @hastrait, @traitdispatch, @traitmethod, @forwardtraitmethod,

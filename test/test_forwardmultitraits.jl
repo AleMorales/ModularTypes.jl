@@ -78,10 +78,8 @@ const Bz = FMT2.Baz(FMT.T2(1), FMT.Ta2(1))
 @test ffoo2(B, Bz) == 3
 
 # Check that @contains works
-@contains FMT.TC{FMT.T2} FMT.TCa{FMT.Ta2} struct FBaz2
-end
-@contains_kw FMT.TC{FMT.T2} = FMT.T2(1) FMT.TCa{FMT.Ta2} = FMT.Ta2(1) struct FBaz2kw
-end
+@contains FMT.TC{FMT.T2} FMT.TCa{FMT.Ta2} struct FBaz2 end
+@contains_kw FMT.TC{FMT.T2} = FMT.T2(1) FMT.TCa{FMT.Ta2} = FMT.Ta2(1) struct FBaz2kw end
 
 const Bz2 = FBaz2(FMT.T2(1), FMT.Ta2(1))
 @test ffoo(Bz2) == 2

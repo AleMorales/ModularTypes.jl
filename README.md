@@ -199,6 +199,14 @@ will result in the second definition overwriting the first. However,
 ```
 will work.
 
+### Keyword and optional arguments
+
+Methods and function signatures used with `@traitdispatch`, `@traitmethod` and
+`@forwardtraitmethod` may contain optional and keyword arguments. However, these
+arguments cannot be used for trait dispatch. Also, the default values assigned
+in the `@traitdispatch` method will override any default values assigned in the
+`@traitmethod` or `@forwardtraitmethod` methods.
+
 ## How does this work?
 
 This is an implementation of so-called Tim Holy's Traits inspired on the packages
@@ -207,7 +215,8 @@ SimpleTraits.jl and Traitor.jl.
 `@traitdispatch` will takes a function signature and generates a method where each argument qualified with `::::` is converted into a type parameter in the method signature. The body of the generated method is a call to the same function but with
 an extra argument for each trait used for dispatch. These arguments are calls to
 a constructor with the same name as the trait class and taking the type parameter as
-input. That is:
+input. The extra argument go first, as otherwise it would not be possible to use
+optional and keyword arguments. That is:
 
 ```julia
 @traitdispatch fun(x::::TC1, y::Int64, z::::TC2)
@@ -217,7 +226,7 @@ will generate
 
 ```julia
 fun(x::traitTC1, y::Int64, z::traitTC2) where {traitTC1, traitTC2} =
-    fun(x, y, z, TC1(traitTC1), TC2(traitTC2))
+    fun(TC1(traitTC1), TC2(traitTC2), x, y, z)
 ```
 
 `@traitmethod` will add new method definition based on its argument. In the signature
@@ -232,7 +241,7 @@ will generate 2 methods
 
 ```julia
 fun(x::T1, y::Int64, z::T2) = x+y+z
-fun(x, y::Int64, z, ::Type{T1}, ::Type{T2}) = x + y + z
+fun(::Type{T1}, ::Type{T2}, x, y::Int64, z) = x + y + z
 ```
 
 The first method allows to bypass trait dispatch when using objects of type `T1` and `T2`. The second method is the one that will be executed when `x` and `z` are objects
@@ -267,5 +276,5 @@ will generate
 
 ```julia
 fun(x::T1, y::Int64, z::T2) = x+y+z
-fun(x, y::Int64, z, ::Type{T1}, ::Type{T2}) = fun(x.fieldT1, y, z.fieldT2)
+fun(::Type{T1}, ::Type{T2}, x, y::Int64, z) = fun(x.fieldT1, y, z.fieldT2)
 ```

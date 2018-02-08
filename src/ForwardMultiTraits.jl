@@ -25,10 +25,12 @@ macro forwardtraitmethod(def)
       # Need to remove all module prefixing from the type
       cleantyp = cleantype(arg[:typ].args[1]) # (argument of ::)
       rhs[:args][i] = Expr(:., arg[:name], QuoteNode(Symbol(string(:field,cleantyp))))
+    else
+      rhs[:args][i] = arg[:name]
     end
   end
   # Add the single types to args
-  append!(lhs[:args], traits)
+  prepend!(lhs[:args], traits)
   # Return original method and the forwarding trait dispatch method
   return esc(quote
     $(MacroTools.combinedef(fun))

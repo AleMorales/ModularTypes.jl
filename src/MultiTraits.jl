@@ -34,7 +34,9 @@ macro traitdispatch(sig)
     c = 0
     for i in 1:length(lhs[:args])
       arg = splitannotation(lhs[:args][i])
-      if arg[:typ] isa Expr && arg[:typ].head == :(::)
+      if arg[:typ] == nothing
+          rhs[:args][i] = arg[:name]
+      elseif arg[:typ] isa Expr && arg[:typ].head == :(::)
         # Construct trait parameter
         c += 1
         traitpar = Symbol(string(:trait,c))
@@ -50,7 +52,7 @@ macro traitdispatch(sig)
       end
     end
     # Add trait class constructor to rhs
-    append!(rhs[:args], traitcons)
+    prepend!(rhs[:args], traitcons)
 
     # Add type parameters in where clause of lhs
     lhs[:whereparams] = (lhs[:whereparams]..., traitparams...)
@@ -84,7 +86,7 @@ macro traitmethod(def)
     end
   end
   # Add the single types to args
-  append!(fun[:args], traits)
+  prepend!(fun[:args], traits)
   # Return the reconstructed function definition
   newdef = MacroTools.combinedef(fun)
   origdef = MacroTools.combinedef(orig)

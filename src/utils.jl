@@ -1,15 +1,30 @@
+
+# Extract type parameters that make use of "where" syntax
+# Modified from MacroTools in order to support return type annotation
+function gatherwheres(ex)
+  if MacroTools.@capture(ex, (f_ where {params1__}))
+    f2, params2 = gatherwheres(f)
+    (f2, (params1..., params2...))
+  elseif MacroTools.@capture(ex, (f_::rtype_ where {params1__}))
+      f2, params2 = gatherwheres(:($f::$rtype))
+      (f2, (params1..., params2...))
+  else
+    (ex, ())
+  end
+end
+
 # This is based on combinedef from MacroTools but only works with signature, not
 # the full definition
 """
     splitsig(sig)
 `splitsig` converts a method signature into a dictionary structure. """
 function splitsig(sig::Expr)
-  error_msg = "Not a method signature: $sig"
-  fcall_nowhere, whereparams = MacroTools.gatherwheres(sig)
+  error_msg = "Not a signature: $sig"
+  fcall_nowhere, whereparams = gatherwheres(sig)
   @assert(MacroTools.@capture(fcall_nowhere, ((func_(args__; kwargs__)) |
-                                   (func_(args__; kwargs__)::rtype_) |
-                                   (func_(args__)) |
-                                   (func_(args__)::rtype_))),
+                                              (func_(args__; kwargs__)::rtype_) |
+                                              (func_(args__)) |
+                                              (func_(args__)::rtype_))),
           error_msg)
   @assert(MacroTools.@capture(func, (fname_{params__} | fname_)), error_msg)
   di = Dict(:name=>fname, :args=>args,
@@ -19,6 +34,29 @@ function splitsig(sig::Expr)
   if params !== nothing; di[:params] = params end
   di
 end
+
+# This is the same function as in MacroTools, but it uses the enhanced version of
+# gatherwheres
+function splitdef(fdef)
+  error_msg = "Not a function definition: $fdef"
+  @assert(MacroTools.@capture(MacroTools.longdef1(fdef),
+                   function (fcall_ | fcall_) body_ end),
+          "Not a function definition: $fdef")
+  fcall_nowhere, whereparams = gatherwheres(fcall)
+  @assert(MacroTools.@capture(fcall_nowhere, ((func_(args__; kwargs__)) |
+                                   (func_(args__; kwargs__)::rtype_) |
+                                   (func_(args__)) |
+                                   (func_(args__)::rtype_))),
+          error_msg)
+  @assert(MacroTools.@capture(func, (fname_{params__} | fname_)), error_msg)
+  di = Dict(:name=>fname, :args=>args,
+            :kwargs=>(kwargs===nothing ? [] : kwargs), :body=>body)
+  if rtype !== nothing; di[:rtype] = rtype end
+  if whereparams !== nothing; di[:whereparams] = whereparams end
+  if params !== nothing; di[:params] = params end
+  di
+end
+
 
 # This is based on combinedef from MacroTools but only works with signature, not
 # the full definition
@@ -43,8 +81,15 @@ end
 dict with the name of the variable being annotated, the type and its parameters (if any)
 """
 function splitannotation(ex)
-  ex isa Symbol && (return ex)
-  ex.head != :(::) && error("Expression was not a type annotation")
+  # Do not annotate arguments that were not annotated in the original signature
+  ex isa Symbol && (return Dict(:name => ex, :typ => nothing))
+  # Optional parameters handled specially (may or may not be annotated)
+  if ex.head == :kw
+      ex = ex.args[1]
+      ex isa Symbol && (return Dict(:name => ex, :typ => nothing))
+  elseif ex.head != :(::)
+      error("Could not parse argument ",ex)
+  end
   # Get name and type
   MacroTools.@capture(ex, name_::typ_)
   out = Dict(:name => name, :typ => Symbol(), :params => :())
