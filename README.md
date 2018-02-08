@@ -1,5 +1,10 @@
 # ModularTypes
 
+[![Travis](https://travis-ci.org/AleMorales/ModularTypes.jl.svg?branch=master)](https://travis-ci.org/AleMorales/ModularTypes.jl)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/y5v7b53nyb0hwucd?svg=true)](https://ci.appveyor.com/project/AleMorales/modulartypes-jl)
+[![Codecov](https://codecov.io/gh/AleMorales/ModularTypes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/AleMorales/ModularTypes.jl)
+
+
 ModularTypes allows creating Julia types by making use of  type composition and
 a multitrait-dispatch system. This package those situations where, unlike in
 generic programming, an algorithm and its associated data should not be decoupled.
