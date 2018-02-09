@@ -44,4 +44,4 @@ build_script:
       Pkg.clone(pwd(), \"ModularTypes\"); Pkg.build(\"ModularTypes\")"
 
 test_script:
-  - C:\projects\julia\bin\julia -e "Pkg.test(\"ModularTypes\")"
+  - C:\projects\julia\bin\julia -e "Pkg.add(\"Parameters\"); Pkg.test(\"ModularTypes\")"
