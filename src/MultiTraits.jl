@@ -5,13 +5,15 @@
 Declare that type `typ` implements trait `trait`. A trait is declared as `traitclass{trait}`
 where `traitclass` is the trait class that `trait` belongs to.
 """
-macro hastrait(typ, trait)
-    if trait isa Expr && trait.head == :curly && length(trait.args) == 2
-      class = trait.args[1]
-      trait = trait.args[2]
-      return esc(:($class(::Type{$typ}) = $trait))
+macro hastrait(typ, traitdecl)
+    if  MacroTools.@capture(traitdecl, class_{trait_})
+      if MacroTools.@capture(typ, name_{pars__})
+          return esc(:($class(::Type{$typ}) where {$(pars...)} = $trait))
+      else
+          return esc(:($class(::Type{$typ}) = $trait))
+      end
     else
-      error("Trait was not correctly specified")
+      error("Trait was not specified correctly")
     end
 end
 
