@@ -105,17 +105,7 @@ end
 Add to a type definition the implementation of several traits.
 """
 macro implements(args...)
-  length(args) == 1 && error("Must provide traits and type definition")
-  traits = args[1:(end-1)]
-  def = args[end]
-  name = def.args[2]
-  hastraits = :()
-  # Generate the fields and the hastrait statements
-  for trait in traits
-    traitclass = trait.args[1]
-    traittype = trait.args[2]
-    hastraits = :($hastraits; ModularTypes.@hastrait $name $traitclass{$traittype})
-  end
+  def, hastraits = implements_struct(args)
   return esc(quote
     $def
     $hastraits
@@ -129,22 +119,25 @@ Add to a type definition the implementation of several traits.. The type definit
   can use all the features from the `@with_kw` macro of the package `Parameters`
 """
 macro implements_kw(args...)
-  length(args) == 1 && error("Must provide traits and type definition")
-  traits = args[1:(end-1)]
-  def = args[end]
-  name = def.args[2]
-  if name isa Expr
-    name = name.args[1]
-  end
-  hastraits = :()
-  # Generate the fields and the hastrait statements
-  for trait in traits
-    traitclass = trait.args[1]
-    traittype = trait.args[2]
-    hastraits = :($hastraits; ModularTypes.@hastrait $name $traitclass{$traittype})
-  end
+  def, hastraits = implements_struct(args)
   return esc(quote
     Parameters.@with_kw $def
     $hastraits
   end)
+end
+
+
+function implements_struct(args)
+    length(args) == 1 && error("Must provide traits and type definition")
+    traits = args[1:(end-1)]
+    def = args[end]
+    name = def.args[2]
+    hastraits = :()
+    # Generate the fields and the hastrait statements
+    for trait in traits
+      traitclass = trait.args[1]
+      traittype = trait.args[2]
+      hastraits = :($hastraits; ModularTypes.@hastrait $name $traitclass{$traittype})
+    end
+    return def, hastraits
 end
