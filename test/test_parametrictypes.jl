@@ -30,9 +30,9 @@ struct bar2{T,S}
   y::S
 end
 # Type that implements a trait
-struct impl2{T,S}
-  x::T
-  y::S
+struct impl2{T1,S1}
+  x::T1
+  y::S1
 end
 
 @hastrait impl2{T,S} TC{bar2{T,S}}
@@ -40,3 +40,21 @@ tf2 = impl2(1.0,1)
 ti2 = impl2(1,1.0)
 @test TC(typeof(tf2)) == bar2{Float64, Int64}
 @test TC(typeof(ti2)) == bar2{Int64, Float64}
+
+# Implementing parametric traits
+
+# Type to be used as trait
+struct bar2{T,S}
+  x::T
+  y::S
+end
+# Type that implements a parametric trait
+@implements TC{bar2{T1,S1}} struct impl3{T1,S1}
+  x::T1
+  y::S1
+end
+
+tf3 = impl3(1.0,1)
+ti3 = impl3(1,1.0)
+@test TC(typeof(tf3)) == bar2{Float64, Int64}
+@test TC(typeof(ti3)) == bar2{Int64, Float64}
