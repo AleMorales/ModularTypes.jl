@@ -41,8 +41,8 @@ end
 
 ### Single parameter ###
 @hastrait PMT.impl{T} PMT.TC{PMT.bar{T}}
-tf = PMT.impl(1.0)
-ti = PMT.impl(1)
+tf = PMT.impl(one(Float64))
+ti = PMT.impl(one(Int64))
 @test PMT.TC(typeof(tf)) == PMT.bar{Float64}
 @test PMT.TC(typeof(ti)) == PMT.bar{Int64}
 
@@ -53,8 +53,8 @@ ti = PMT.impl(1)
 
 ### Multiple parameters ###
 @hastrait PMT.impl2{T,S} PMT.TC{PMT.bar2{T,S}}
-tf2 = PMT.impl2(1.0,1)
-ti2 = PMT.impl2(1,1.0)
+tf2 = PMT.impl2(one(Float64),one(Int64))
+ti2 = PMT.impl2(one(Int64),one(Float64))
 @test PMT.TC(typeof(tf2)) == PMT.bar2{Float64, Int64}
 @test PMT.PMT.TC(typeof(ti2)) == PMT.bar2{Int64, Float64}
 
@@ -63,15 +63,15 @@ ti2 = PMT.impl2(1,1.0)
 @test pfoo2(PMT.bar2(1,1.0)) == pfoo2(PMT.impl2(1,1.0))
 
 # Implementing parametric traits
-tf3 = PMT.impl3(1.0,1)
-ti3 = PMT.impl3(1,1.0)
+tf3 = PMT.impl3(one(Float64),one(Int64))
+ti3 = PMT.impl3(one(Int64),one(Float64))
 @test PMT.TC(typeof(tf3)) == PMT.bar2{Float64, Int64}
 @test PMT.TC(typeof(ti3)) == PMT.bar2{Int64, Float64}
 
 
 # Containing parametric traits
-tf4 = PMT.impl4(PMT.bar2(1.0,1))
-ti4 = PMT.impl4(PMT.bar2(1,1.0))
+tf4 = PMT.impl4(PMT.bar2(one(Float64),one(Int64)))
+ti4 = PMT.impl4(PMT.bar2(one(Int64),one(Float64)))
 @test PMT.TC(typeof(tf4)) == PMT.bar2{Float64, Int64}
 @test PMT.TC(typeof(ti4)) == PMT.bar2{Int64, Float64}
 
