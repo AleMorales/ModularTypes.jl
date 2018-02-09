@@ -49,9 +49,6 @@ macro contains(args...)
   traits = args[1:(end-1)]
   def = args[end]
   name = def.args[2]
-  if name isa Expr
-    name = name.args[1]
-  end
   hastraits = :()
   # Generate the fields and the hastrait statements
   for trait in traits
@@ -80,9 +77,6 @@ macro contains_kw(args...)
   traits = args[1:(end-1)]
   def = args[end]
   name = def.args[2]
-  if name isa Expr
-    name = name.args[1]
-  end
   hastraits = :()
   # Generate the fields and the hastrait statements
   for trait in traits

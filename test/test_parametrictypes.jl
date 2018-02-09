@@ -42,13 +42,6 @@ ti2 = impl2(1,1.0)
 @test TC(typeof(ti2)) == bar2{Int64, Float64}
 
 # Implementing parametric traits
-
-# Type to be used as trait
-struct bar2{T,S}
-  x::T
-  y::S
-end
-# Type that implements a parametric trait
 @implements TC{bar2{T1,S1}} struct impl3{T1,S1}
   x::T1
   y::S1
@@ -58,3 +51,12 @@ tf3 = impl3(1.0,1)
 ti3 = impl3(1,1.0)
 @test TC(typeof(tf3)) == bar2{Float64, Int64}
 @test TC(typeof(ti3)) == bar2{Int64, Float64}
+
+
+# Containing parametric traits
+@contains TC{bar2{T1,S1}} struct impl4{T1,S1} end
+
+tf4 = impl4(bar2(1.0,1))
+ti4 = impl4(bar2(1,1.0))
+@test TC(typeof(tf4)) == bar2{Float64, Int64}
+@test TC(typeof(ti4)) == bar2{Int64, Float64}

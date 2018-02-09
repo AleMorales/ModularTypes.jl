@@ -104,18 +104,12 @@ function splitannotation(ex)
 end
 
 # Deal with trait types that are not visible and required module prefixes
-function cleantype(cleantyp)
-    if cleantyp isa Expr && cleantyp.head == :.
-        cleantyp = cleantyp.args[2] # No matter how many nesting modules this works
-        if cleantyp isa Expr && cleantyp.head == :quote
-          cleantyp = cleantyp.args[1]
-        elseif cleantyp isa QuoteNode
-          cleantyp = cleantyp.value
-        end
-    end
-    if cleantyp isa Symbol
-        return cleantyp
+# Also deal with parametric types
+function cleantype(ex)
+    if MacroTools.@capture(ex, (M_.name_{pars__}) | (name_{pars__}) |
+                                     (M_.name_) | (name_))
+        return name
     else
-        error("I could not parse correctly the trait type ", cleantyp)
+        error("I could not parse correctly the trait type ", ex)
     end
 end
