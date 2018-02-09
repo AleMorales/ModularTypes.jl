@@ -8,7 +8,7 @@
 ModularTypes allows creating Julia types by making use of  type composition and
 a multitrait-dispatch system. This package those situations where, unlike in
 generic programming, an algorithm and its associated data should not be decoupled.
-A common situation where such deocupling is not adequate is when buildiType ng models
+A common situation where such deocupling is not adequate is when building models
 by reusing modules (e.g. in agent based modelling), hence the name of the package.
 
 ## What is the problem?
