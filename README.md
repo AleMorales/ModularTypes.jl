@@ -207,10 +207,33 @@ arguments cannot be used for trait dispatch. Also, the default values assigned
 in the `@traitdispatch` method will override any default values assigned in the
 `@traitmethod` or `@forwardtraitmethod` methods.
 
+### Parametric types
+
+Parametric types may be used as traits and trait dispatch will correctly propagate
+the type parameters. When composing a type from parametric types, the name of
+the field should not take into account the type parameters. But the type parameters
+still need to be considered in the type definition. That is:
+
+```julia
+@contains TC{T{T1,S1}} struct bar{T1,S1} end
+```
+is equivalent to:
+
+```julia
+struct bar{T1,S1}
+  fieldT::T{T1,S1}
+end
+@hastraits bar{T1,S1} TC{T{T1,S1}}
+```
+
+Note that the `T1`s and `S1`s must coincide within the type definition and
+within the `@hastrait` macro. Type parameters may also be used in methods
+modified by `@traitdispatch`, `@traitmethod` or `@forwardtraitmethod` and they
+will be respected in the generated methods.
+
 ## How does this work?
 
-This is an implementation of so-called Tim Holy's Traits inspired on the packages
-SimpleTraits.jl and Traitor.jl.
+This is an implementation of inspired on the packages SimpleTraits.jl and Traitor.jl.
 
 `@traitdispatch` will takes a function signature and generates a method where each argument qualified with `::::` is converted into a type parameter in the method signature. The body of the generated method is a call to the same function but with
 an extra argument for each trait used for dispatch. These arguments are calls to
