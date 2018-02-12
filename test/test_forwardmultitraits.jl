@@ -41,12 +41,12 @@ module FMT2
 end
 
 # Dispatch function foo for two traits under trait class TC
-@traitdispatch ffoo(x::::FMT.TC)
+@traitdispatch function ffoo(x::::FMT.TC) end
 @forwardtraitmethod ffoo(x::::FMT.T) = x.x
 @forwardtraitmethod ffoo(x::::FMT.T2) = 2*x.y
 
 # Dispatch function fooz for two traits under trait class TCa
-@traitdispatch ffooz(x::::FMT.TCa)
+@traitdispatch function ffooz(x::::FMT.TCa) end
 @forwardtraitmethod ffooz(x::::FMT.Ta) = x.x
 @forwardtraitmethod ffooz(x::::FMT.Ta2) = 2*x.y
 
@@ -73,7 +73,7 @@ const Bz = FMT2.Baz(FMT.T2(1), FMT.Ta2(1))
 @test ffooz(Bz) == 2
 
 # Multiple trait-dispatch across trait classes (also, traits have been assigned already)
-@traitdispatch ffoo2(x::::FMT.TC, y::::FMT.TCa)
+@traitdispatch function ffoo2(x::::FMT.TC, y::::FMT.TCa) end
 @forwardtraitmethod ffoo2(x::::FMT.T, y::::FMT.Ta2) = x.x + 2*y.y
 
 @test ffoo2(B, Bz) == 3

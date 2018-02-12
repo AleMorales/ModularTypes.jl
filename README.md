@@ -79,7 +79,7 @@ dispatch method and the specific trait methods are implement by the macros
 # Type to be used for trait dispatching
 struct TC end
 # Create a dispatch method associated to a trait class
-@traitdispatch foo(x::::TC)
+@traitdispatch function foo(x::::TC) end
 # Type to be used as trait
 struct T end
 # Create a method for trait T
@@ -128,7 +128,7 @@ For example:
 # Type to be used for trait dispatching
 struct fTC end
 # Create a dispatch method associated to a trait class
-@traitdispatch fooz(x::::fTC)
+@traitdispatch function fooz(x::::fTC) end
 # Just a regular type, for which a forwarding method will be created
 struct fT
     x::Int64
@@ -189,13 +189,13 @@ end
 
 Only one trait class can dispatch a given method on a given namespace. That is,
 ```julia
-@traitdispatch foo(x::::TC, y)
-@traitdispatch foo(x::::TC2, y)
+@traitdispatch function foo(x::::TC, y) end
+@traitdispatch function foo(x::::TC2, y) end
 ```
 will result in the second definition overwriting the first. However,
 ```julia
-@traitmethod foo(x::::T, y)
-@traitmethod foo(x::::T2, y)
+@traitmethod function foo(x::::T, y) end
+@traitmethod function foo(x::::T2, y) end
 ```
 will work.
 
@@ -235,14 +235,16 @@ will be respected in the generated methods.
 
 This is an implementation of inspired on the packages SimpleTraits.jl and Traitor.jl.
 
-`@traitdispatch` will takes a function signature and generates a method where each argument qualified with `::::` is converted into a type parameter in the method signature. The body of the generated method is a call to the same function but with
-an extra argument for each trait used for dispatch. These arguments are calls to
-a constructor with the same name as the trait class and taking the type parameter as
-input. The extra argument go first, as otherwise it would not be possible to use
-optional and keyword arguments. That is:
+`@traitdispatch` will takes an empty function, extract its signature and generates
+a method where each argument qualified with `::::` is converted into a type parameter
+in the method signature. The body of the generated method is a call to the same
+function but with an extra argument for each trait used for dispatch. These
+arguments are calls to a constructor with the same name as the trait class and
+taking the type parameter as input. The extra argument go first, as otherwise it
+would not be possible to use optional and keyword arguments. That is:
 
 ```julia
-@traitdispatch fun(x::::TC1, y::Int64, z::::TC2)
+@traitdispatch function fun(x::::TC1, y::Int64, z::::TC2) end
 ```
 
 will generate

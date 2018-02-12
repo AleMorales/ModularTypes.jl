@@ -8,10 +8,12 @@ Generate a forwarding trait method for the function `fun`. Traits inside the
 """
 macro forwardtraitmethod(def)
   # Break function into pieces
-  fun = splitdef(def)
+  fun = MacroTools.splitdef(def)
   lhs = deepcopy(fun)
   rhs = deepcopy(lhs)
-  rhs[:whereparams] = ()
+  # rhs will be a function call so drop the wheres and return type
+  delete!(rhs, :whereparams)
+  delete!(rhs, :rtype)
   # Loop over arguments and, for each argument with "::::", generate additional
   # argument with type singleton and field access on rhs
   traits = Expr[]
@@ -32,9 +34,10 @@ macro forwardtraitmethod(def)
   # Add the single types to args
   prepend!(lhs[:args], traits)
   # Return original method and the forwarding trait dispatch method
+  lhs[:body] = combinesig(rhs)
   return esc(quote
     $(MacroTools.combinedef(fun))
-    $(combinesig(lhs)) = $(combinesig(rhs))
+    $(MacroTools.combinedef(lhs))
   end)
 end
 

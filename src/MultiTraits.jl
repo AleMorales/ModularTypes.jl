@@ -20,14 +20,16 @@ end
 """
     @traitdispatch sig
 
-Generate a trait dispatch method for the function signature `sig`. Trait classes
-  inside the signature should be indicated with `::::` rather than `::`
+Generate a trait dispatch method for the empty function `sig`. Trait classes
+  inside the function signature should be indicated with `::::` rather than `::`
 """
-macro traitdispatch(sig)
-    # We need lhs and rhs versions of the signature.
-    lhs = splitsig(sig)
+macro traitdispatch(def)
+    # We need lhs and rhs versions to generate the modified function call
+    lhs = MacroTools.splitdef(def)
     rhs = deepcopy(lhs)
-    rhs[:whereparams] = ()
+    # We do not need where parameters and return type for the function call
+    delete!(rhs, :whereparams)
+    delete!(rhs, :rtype)
     traitcons = Expr[]
     traitparams = Symbol[]
     # Loop through each argument of the method signature and id trait classes from :::: syntax
@@ -73,8 +75,8 @@ Generate a trait method for the function `fun`. Traits inside the
 """
 macro traitmethod(def)
   # Break function into pieces
-  orig = splitdef(def)
-  fun = splitdef(def)
+  orig = MacroTools.splitdef(def)
+  fun = MacroTools.splitdef(def)
   # Loop over arguments and, for each argument with "::::", generate additional
   # argument with type singleton
   traits = Expr[]

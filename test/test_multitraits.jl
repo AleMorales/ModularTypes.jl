@@ -31,12 +31,12 @@ end
 
 
 # Dispatch function foo for two traits under trait class TC
-@traitdispatch foo(x::::MT.TC)
+@traitdispatch function foo(x::::MT.TC) end
 @traitmethod foo(x::::MT.T) = x.x
 @traitmethod foo(x::::MT.T2) = 2*x.y
 
 # Dispatch function fooz for two traits under trait class TCa
-@traitdispatch fooz(x::::MT.TCa)
+@traitdispatch function fooz(x::::MT.TCa) end
 @traitmethod fooz(x::::MT.Ta) = x.x
 @traitmethod fooz(x::::MT.Ta2) = 2*x.y
 
@@ -59,7 +59,7 @@ end
 @test fooz(MT2.Baz(1)) == 2
 
 # Multiple trait-dispatch across trait classes (also, traits have been assigned already)
-@traitdispatch foo2(x::::MT.TC, y::::MT.TCa)
+@traitdispatch function foo2(x::::MT.TC, y::::MT.TCa) end
 @traitmethod foo2(x::::MT.T, y::::MT.Ta2) = x.x + 2*y.y
 
 @test foo2(MT2.Bar(1), MT2.Baz(1)) == 3

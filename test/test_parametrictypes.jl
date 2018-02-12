@@ -46,7 +46,7 @@ ti = PMT.impl(one(Int64))
 @test PMT.TC(typeof(tf)) == PMT.bar{Float64}
 @test PMT.TC(typeof(ti)) == PMT.bar{Int64}
 
-@traitdispatch pfoo(x::::PMT.TC)
+@traitdispatch function pfoo(x::::PMT.TC) end
 @traitmethod function pfoo(x::::PMT.bar{T})::DataType where {T} T end
 @test pfoo(PMT.bar(1)) == pfoo(PMT.impl(1))
 
@@ -58,7 +58,7 @@ ti2 = PMT.impl2(one(Int64),one(Float64))
 @test PMT.TC(typeof(tf2)) == PMT.bar2{Float64, Int64}
 @test PMT.PMT.TC(typeof(ti2)) == PMT.bar2{Int64, Float64}
 
-@traitdispatch pfoo2(x::::PMT.TC)
+@traitdispatch function pfoo2(x::::PMT.TC) end
 @traitmethod function pfoo2(x::::PMT.bar2{T,S})::DataType where {T,S} S end
 @test pfoo2(PMT.bar2(1,1.0)) == pfoo2(PMT.impl2(1,1.0))
 
@@ -75,6 +75,6 @@ ti4 = PMT.impl4(PMT.bar2(one(Int64),one(Float64)))
 @test PMT.TC(typeof(tf4)) == PMT.bar2{Float64, Int64}
 @test PMT.TC(typeof(ti4)) == PMT.bar2{Int64, Float64}
 
-@traitdispatch pfoo4(x::::PMT.TC)
+@traitdispatch function pfoo4(x::::PMT.TC) end
 @forwardtraitmethod function pfoo4(x::::PMT.bar2{T,S})::DataType where {T,S} S end
 @test pfoo4(PMT.bar2(1,1.0)) == pfoo4(PMT.impl4(PMT.bar2(1,1.0)))
