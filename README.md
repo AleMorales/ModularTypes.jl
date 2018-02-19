@@ -178,7 +178,7 @@ end
 is equivalent to:
 
 ```julia
-@contains TC1{T1} TC{T2} struct bar2
+struct bar2
   y::Int64
   fieldT1::T1
   fieldT2::T2
